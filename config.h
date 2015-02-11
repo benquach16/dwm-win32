@@ -8,8 +8,8 @@
 #define selbgcolor      0x0036342e
 #define selfgcolor      0x00cfd7d3
 
-static const unsigned int borderpx    = 1;        /* border pixel of windows */
-static const unsigned int textmargin  = 5;        /* margin for the text displayed on the bar */
+static const unsigned int borderpx    = 0;        /* border pixel of windows */
+static const unsigned int textmargin  = 4;        /* margin for the text displayed on the bar */
 static bool showbar                   = true;     /* false means no bar */
 static bool topbar                    = true;     /* false means bottom bar */
 static bool showclock                 = true;     /* false means no clock */

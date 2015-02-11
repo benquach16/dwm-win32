@@ -400,7 +400,7 @@ drawbar(void) {
 
 
 	//use this to keep adding stuff to the right side
-	int counter_from_w;
+	int counter_from_w=0;
 	
 	if(showclock) {
 		/* Draw Date Time */
@@ -425,18 +425,35 @@ drawbar(void) {
 
 	//draw misc widgets here
 	//volume widget
+	//current bug : volume does not return the correct value
 /*
 	DWORD vol;
 	waveOutGetVolume(NULL, &vol);
-
-
-	dc.w = TEXTW("vol");
+	char buf[50];
+	snprintf(buf, sizeof buf, "%d", (int)vol);
+	dc.w = TEXTW("vol:");
 	dc.x = ww - counter_from_w - dc.w;
-	drawtext("vol:", dc.norm, false);
-	counter_from_w -= dc.w;
+	drawtext(buf, dc.norm, false);
+	counter_from_w += dc.w;
 */
 	//draw the systray here	
 	//fuck me
+
+//battery widget
+	SYSTEM_POWER_STATUS status;
+	GetSystemPowerStatus(&status);
+	unsigned int battery = status.BatteryLifePercent;
+	char buf[5];
+	snprintf(buf, sizeof buf, "%d", battery);   
+
+	char f_str[80];
+	strcpy(f_str,"battery: ");
+	strcat(f_str,buf);
+	strcat(f_str,"%");
+	dc.w = TEXTW(f_str);
+	dc.x = ww - counter_from_w - dc.w;
+	drawtext(f_str, dc.norm, false);
+	counter_from_w += dc.w;
 	
 	ReleaseDC(barhwnd, dc.hdc);
 }

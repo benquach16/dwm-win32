@@ -10,7 +10,7 @@ MANPREFIX = ${PREFIX}/share/man
 # flags
 CPPFLAGS = -DVERSION=\"${VERSION}\"
 CFLAGS = -std=c99 -pedantic -Wall -Os ${CPPFLAGS}
-LDFLAGS = -s -mwindows
+LDFLAGS = -s -mwindows -lWinMM
 
 # compiler and linker
 CC = C:/MinGW/bin/gcc.exe
