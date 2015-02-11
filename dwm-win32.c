@@ -429,12 +429,12 @@ drawbar(void) {
 	DWORD vol;
 	waveOutGetVolume(NULL, &vol);
 
-*/
+
 	dc.w = TEXTW("vol");
 	dc.x = ww - counter_from_w - dc.w;
 	drawtext("vol:", dc.norm, false);
 	counter_from_w -= dc.w;
-
+*/
 	//draw the systray here	
 	//fuck me
 	
@@ -894,7 +894,7 @@ LRESULT CALLBACK barhandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 		case WM_MBUTTONDOWN:
-			buttonpress(msg, &MAKEPOINTS(lParam));
+			//buttonpress(msg, &MAKEPOINTS(lParam));
 			break;
 		case WM_TIMER:
 			drawbar();
@@ -1199,7 +1199,8 @@ setupbar(HINSTANCE hInstance) {
 
 	/* calculate width of the largest layout symbol */
 	dc.hdc = GetWindowDC(barhwnd);
-	HFONT font = (HFONT)GetStockObject(SYSTEM_FONT); 
+	//HFONT font = (HFONT)GetStockObject(SYSTEM_FONT);
+	HFONT font = CreateFont(11, 0, 0, 0, 0, FALSE, 0, 0, 0, 0, 0, 0, 0, "Fixedsys Regular");
 	SelectObject(dc.hdc, font);
 
 	for(blw = i = 0; LENGTH(layouts) > 1 && i < LENGTH(layouts); i++) {
@@ -1409,10 +1410,15 @@ toggleexplorer(const Arg *arg) {
 		setvisibility(hwnd, !IsWindowVisible(hwnd));
 
 	hwnd = FindWindow("Shell_TrayWnd", NULL);
+
 	if (hwnd)
 		setvisibility(hwnd, !IsWindowVisible(hwnd));
 
-	
+	hwnd = FindWindow("Button", NULL);
+	if(hwnd)
+	{
+		setvisibility(hwnd, !IsWindowVisible(hwnd));
+	}
 	updategeom();
 	updatebar();
 	arrange();		

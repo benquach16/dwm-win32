@@ -16,6 +16,7 @@ static bool showclock                 = true;     /* false means no clock */
 
 /* tagging */
 static const char tags[][MAXTAGLEN] = { "main", "msg", "games", "dev", "misc", "misc", "web" };
+//static const char tags[][MAXTAGLEN] = {"1","2","3","4","5","6","7","8","9"};
 static unsigned int tagset[] = {1, 1}; /* after start, first tag is selected */
 
 static Rule rules[] = {
@@ -37,8 +38,7 @@ static Layout layouts[] = {
 };
 
 /* key definitions */
-//#define MODKEY 		(MOD_CONTROL | MOD_ALT)
-#define MODKEY          (MOD_WIN)
+#define MODKEY 		(MOD_CONTROL | MOD_ALT)
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|MOD_CONTROL,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
