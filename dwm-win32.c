@@ -24,6 +24,8 @@
 #include <stdbool.h>
 #include <time.h>
 
+#include <mmsystem.h>
+
 #define NAME					"dwm-win32" 	/* Used for window name/class */
 
 /* macros */
@@ -110,6 +112,11 @@ typedef struct {
 	unsigned int tags;
 	bool isfloating;
 } Rule;
+
+//Ben Quach changes
+typedef struct {
+	
+} SystemTrayNode;
 
 /* function declarations */
 static void applyrules(Client *c);
@@ -390,6 +397,10 @@ drawbar(void) {
 		dc.w = ww - x;
 	}
 	drawtext(stext, dc.norm, false);
+
+
+	//use this to keep adding stuff to the right side
+	int counter_from_w;
 	
 	if(showclock) {
 		/* Draw Date Time */
@@ -398,6 +409,7 @@ drawbar(void) {
 		strftime(timestr, 255, clockfmt, date);
 		dc.w = TEXTW(timestr);
 		dc.x = ww - dc.w;
+		counter_from_w = dc.w;
 		drawtext(timestr, dc.norm, false);
 	}
 
@@ -411,6 +423,21 @@ drawbar(void) {
 			drawtext(NULL, dc.norm, false);
 	}
 
+	//draw misc widgets here
+	//volume widget
+/*
+	DWORD vol;
+	waveOutGetVolume(NULL, &vol);
+
+*/
+	dc.w = TEXTW("vol");
+	dc.x = ww - counter_from_w - dc.w;
+	drawtext("vol:", dc.norm, false);
+	counter_from_w -= dc.w;
+
+	//draw the systray here	
+	//fuck me
+	
 	ReleaseDC(barhwnd, dc.hdc);
 }
 
@@ -446,7 +473,8 @@ drawtext(const char *text, COLORREF col[ColLast], bool invert) {
 	SetBkMode(dc.hdc, TRANSPARENT);
 	SetTextColor(dc.hdc, col[invert ? ColBG : ColFG]);
 
-	HFONT font = (HFONT)GetStockObject(SYSTEM_FONT); 
+	//HFONT font = (HFONT)GetStockObject(SYSTEM_FONT);
+	HFONT font = CreateFont(11, 0, 0, 0, 0, FALSE, 0, 0, 0, 0, 0, 0, 0, "Fixedsys Regular");
 	SelectObject(dc.hdc, font);
 
 	DrawText(dc.hdc, text, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);

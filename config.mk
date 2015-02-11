@@ -13,4 +13,4 @@ CFLAGS = -std=c99 -pedantic -Wall -Os ${CPPFLAGS}
 LDFLAGS = -s -mwindows
 
 # compiler and linker
-CC = gcc
+CC = C:/MinGW/bin/gcc.exe
