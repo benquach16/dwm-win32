@@ -184,6 +184,9 @@ static void zoom(const Arg *arg);
 typedef BOOL (*RegisterShellHookWindowProc) (HWND);
 RegisterShellHookWindowProc RegisterShellHookWindow;
 
+//Ben Quach tray hook stuff
+LRESULT CALLBACK NotificationHook(int code, WPARAM wParam, LPARAM lParam);
+
 /* XXX: should be in a system header, no? */
 typedef struct {
     HWND    hwnd;
@@ -276,7 +279,8 @@ buttonpress(unsigned int button, POINTS *point) {
 	dc.hdc = GetWindowDC(barhwnd);
 
 	i = x = 0;
-
+	//this code originally only worked for the original wide font
+	//hack it to work with our font
 	do { x += TEXTW(tags[i]); } while(point->x >= x && ++i < LENGTH(tags));
 	if(i < LENGTH(tags)) {
 		click = ClkTagBar;
@@ -491,7 +495,7 @@ drawtext(const char *text, COLORREF col[ColLast], bool invert) {
 	SetTextColor(dc.hdc, col[invert ? ColBG : ColFG]);
 
 	//HFONT font = (HFONT)GetStockObject(SYSTEM_FONT);
-	HFONT font = CreateFont(11, 0, 0, 0, 0, FALSE, 0, 0, 0, 0, 0, 0, 0, "Fixedsys Regular");
+	HFONT font = CreateFont(11, 0, 0, 0, 0, FALSE, 0, 0, 0, 0, 0, 0, 0, "Terminus");
 	SelectObject(dc.hdc, font);
 
 	DrawText(dc.hdc, text, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
@@ -1024,7 +1028,7 @@ drawborder(Client *c, COLORREF color) {
 #if 0
 	/* this would be another way, but it uses standard sytem colors */
 	RECT area = { .left = 0, .top = 0, .right = c->w, .bottom = c->h };
-	DrawEdge(hdc, &area, BDR_RAISEDOUTER | BDR_SUNKENINNER, BF_RECT);
+	//DrawEdge(hdc, &area, BDR_RAISEDOUTER | BDR_SUNKENINNER, BF_RECT);
 #else
 	HPEN pen = CreatePen(PS_SOLID, borderpx, color);
 	SelectObject(hdc, pen);
@@ -1049,7 +1053,7 @@ setborder(Client *c, bool border) {
 		 *      color with SetSysColor but this only seems to work if we leave WS_SIZEBOX enabled which
 		 *      is not optimal.
 		 */
-		SetWindowLong(c->hwnd, GWL_STYLE, (GetWindowLong(c->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) | WS_BORDER | WS_THICKFRAME);
+		SetWindowLong(c->hwnd, GWL_STYLE, (GetWindowLong(c->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_SIZEBOX)) | WS_BORDER);
 		SetWindowLong(c->hwnd, GWL_EXSTYLE, (GetWindowLong(c->hwnd, GWL_EXSTYLE) & ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE)));
 	}
 	SetWindowPos(c->hwnd, 0, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER );
@@ -1217,7 +1221,7 @@ setupbar(HINSTANCE hInstance) {
 	/* calculate width of the largest layout symbol */
 	dc.hdc = GetWindowDC(barhwnd);
 	//HFONT font = (HFONT)GetStockObject(SYSTEM_FONT);
-	HFONT font = CreateFont(11, 0, 0, 0, 0, FALSE, 0, 0, 0, 0, 0, 0, 0, "Fixedsys Regular");
+	HFONT font = CreateFont(11, 0, 0, 0, 0, FALSE, 0, 0, 0, 0, 0, 0, 0, "Terminus");
 	SelectObject(dc.hdc, font);
 
 	for(blw = i = 0; LENGTH(layouts) > 1 && i < LENGTH(layouts); i++) {
@@ -1431,10 +1435,11 @@ toggleexplorer(const Arg *arg) {
 	if (hwnd)
 		setvisibility(hwnd, !IsWindowVisible(hwnd));
 
-	hwnd = FindWindow("Button", NULL);
+	hwnd = FindWindowEx(NULL, NULL, MAKEINTATOM(0xC017), TEXT("Start"));
 	if(hwnd)
 	{
-		setvisibility(hwnd, !IsWindowVisible(hwnd));
+		//setvisibility(hwnd, !IsWindowVisible(hwnd));
+		ShowWindow(hwnd, FALSE);
 	}
 	updategeom();
 	updatebar();
